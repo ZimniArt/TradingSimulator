@@ -1,11 +1,20 @@
+
+#[derive(Debug)]
+struct StockInfo{
+    price : f64,
+}
+
 fn main() {
-    //raw data
+    let mut  period: Vec<StockInfo> = Vec::new() ;
+    period.push(StockInfo { price: 58.7 });
+    period.push(StockInfo { price: 59.3 });
+    period.push(StockInfo { price: 61.1 });
 
-    //loop
-
-    //visualisation
+    println!("example of data is {:?}", period);
 
 }
+
+
 
 
 fn _behavior_1_buy(){
