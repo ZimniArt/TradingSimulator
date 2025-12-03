@@ -1,16 +1,40 @@
-
+#[derive(Debug)]
+enum Stock {
+    Yandex,
+    Aeroflot
+}
+#[derive(Debug)]
+struct StockInPortfolio{
+    name: Stock,
+    amount: u32
+}
 #[derive(Debug)]
 struct StockInfo{
+    name: Stock,
     price : f64,
 }
+#[derive(Debug)]
+struct Portfolo{
+    stocks: Vec<StockInPortfolio>,
+}
+
+
+enum Action {
+    Buy,
+    Sell,
+    Hold
+}
+
 
 fn main() {
     let mut  period: Vec<StockInfo> = Vec::new() ;
-    period.push(StockInfo { price: 58.7 });
-    period.push(StockInfo { price: 59.3 });
-    period.push(StockInfo { price: 61.1 });
+    period.push(StockInfo {name: Stock::Yandex, price: 58.7 });
+    period.push(StockInfo {name: Stock::Yandex, price: 59.3 });
+    period.push(StockInfo {name: Stock::Yandex, price: 61.1 });
 
     println!("example of data is {:?}", period);
+
+
 
 }
 
