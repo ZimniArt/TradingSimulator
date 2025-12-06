@@ -22,8 +22,7 @@ struct AccountBalancePoint{
     cash_ammount:f64,
 }
 
-trait Strategy {
-}
+trait Strategy {}
 #[derive(Debug)]
 struct StategyLoopBuySell{}
 impl Strategy for StategyLoopBuySell {}
@@ -49,6 +48,7 @@ fn main() {
     println!("current stocks holding is {} and amount of cash is {} rubles", &_account_starting_point.stocks_holding, &_account_starting_point.cash_ammount);
     
     simulate(&_strategy, &_market_timeline, &_account_starting_point);
+
     let _strategy   = StategyLoopBuySell {};
     simulate(&_strategy, &_market_timeline, &_account_starting_point);
     
@@ -64,7 +64,7 @@ fn parse_data(_raw_data: RawData) ->Vec<DataPoint>{
 }
 
 fn simulate <T: Strategy + std::fmt::Debug>(_strategy: &T, _market_timeline : &Vec<DataPoint>, starting_account: &AccountBalancePoint){
-    println!("market point is {}", _market_timeline[0].price);
+    println!("\nmarket point is {}", _market_timeline[0].price);
     let  _account_balance_history : Vec<AccountBalancePoint>= vec![starting_account.clone()];
     println!("{:?} resulted in {:?}",_strategy, _account_balance_history)
 }
