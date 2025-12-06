@@ -1,61 +1,46 @@
-#[derive(Debug)]
-enum Stock {
-    Yandex,
-    Aeroflot
+// struct RawDataPoint{
+//     date: String,
+//     price: f64,
+//     opening_price: f64,
+//     maximum_price: f64,
+//     minimum_price: f64,
+//     exchange_voplume: i32,
+//     price_exchange: f64,
+// }
+struct RawData{
+    raw_data: String,
 }
-#[derive(Debug)]
-struct StockInPortfolio{
-    name: Stock,
-    amount: u32
-}
-#[derive(Debug)]
-struct StockInfo{
-    name: Stock,
+
+struct DataPoint{
     price : f64,
 }
-#[derive(Debug)]
-struct Portfolo{
-    stocks: Vec<StockInPortfolio>,
+
+struct AccountBalancePoint{
+    stocks_holding: u32,
+    cash_ammount:f64,
+}
+struct Strategy {
+    
+}
+fn main() { 
+    let raw_data = RawData{raw_data : String::from("data")};
+    let market_timeline: Vec<DataPoint> = parse_data(raw_data);
+
+    let strategy : Strategy = Strategy {};
+    let account_starting_point = AccountBalancePoint{stocks_holding:0, cash_ammount:100000.0}
+    let account_balance_history : Vec<AccountBalancePoint> = simulate(strategy, market_timeline, account_starting_point);
+    
 }
 
-
-enum Action {
-    Buy,
-    Sell,
-    Hold
+fn parse_data(raw_data: RawData) ->Vec<DataPoint>{
+    let data_point = DataPoint{ price : 5.3 };
+    let mut data_array: Vec<DataPoint> ;
+    data_array.push(data_point);
+    return data_array
+}
+fn simulate(strategy: Strategy, market_timeline : Vec<DataPoint>, starting_account: AccountBalancePoint) -> Vec<AccountBalancePoint>{
+    let mut account_balance_history : Vec<AccountBalancePoint>;
+    account_balance_history.push(starting_account);
+    account_balance_history
 }
 
-
-fn main() {
-    let mut  period: Vec<StockInfo> = Vec::new() ;
-    period.push(StockInfo {name: Stock::Yandex, price: 58.7 });
-    period.push(StockInfo {name: Stock::Yandex, price: 59.3 });
-    period.push(StockInfo {name: Stock::Yandex, price: 61.1 });
-
-    println!("example of data is {:?}", period);
-
-
-
-}
-
-
-
-
-fn _behavior_1_buy(){
-    //prpbably buy at the start, sell at the end
-}
-
-fn _transaction(){
-    // probably will have a commission per every operation
-}
-
-
-// import raw data: date, average\midian price of the day
-
-//money in
-
-//siimulation loop
-//behavior
-
-//graphic visualisation of data, stock prices\ money
-//result. money out
