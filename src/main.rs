@@ -20,14 +20,23 @@ struct AccountBalancePoint{
     stocks_holding: u32,
     cash_ammount:f64,
 }
-struct Strategy {
-    
+trait Strategy {
 }
+struct LoopBuySellStrategy{}
+
+impl Strategy for LoopBuySellStrategy {
+}
+// enum Action{
+//     Sell {amount: i32},
+//     Buy {amount: i32},
+//     Hold,
+// }
+
 fn main() { 
     let _raw_data = RawData{_raw_data : String::from("data")};
     let _market_timeline: Vec<DataPoint> = parse_data(_raw_data);
 
-    let _strategy : Strategy = Strategy {};
+    let _strategy   = LoopBuySellStrategy {};
     let _account_starting_point = AccountBalancePoint{stocks_holding:0, cash_ammount:100000.0};
     println!("current stocks holding is {} and amount of cash is {} rubles", &_account_starting_point.stocks_holding, &_account_starting_point.cash_ammount);
     let _account_balance_history : Vec<AccountBalancePoint> = simulate(_strategy, _market_timeline, _account_starting_point);
@@ -40,7 +49,7 @@ fn parse_data(_raw_data: RawData) ->Vec<DataPoint>{
     let data_array: Vec<DataPoint> = vec![data_point];
     return data_array
 }
-fn simulate(_strategy: Strategy, _market_timeline : Vec<DataPoint>, starting_account: AccountBalancePoint) -> Vec<AccountBalancePoint>{
+fn simulate <T: Strategy>(_strategy: T, _market_timeline : Vec<DataPoint>, starting_account: AccountBalancePoint) -> Vec<AccountBalancePoint>{
     println!("market point is {}", _market_timeline[0].price);
     let mut _account_balance_history : Vec<AccountBalancePoint>= vec![starting_account];
     _account_balance_history
