@@ -10,7 +10,7 @@
 struct RawData{
     _raw_data: String,
 }
-
+#[derive(Debug)]
 struct DataPoint{
     price : f64,
 }
@@ -52,20 +52,22 @@ fn main() {
     let _strategy   = StategyLoopBuySell {};
     simulate(&_strategy, &_market_timeline, &_account_starting_point);
     
-
-
 }
 
 
 fn parse_data(_raw_data: RawData) ->Vec<DataPoint>{
-    let data_point = DataPoint{ price : 5.3 };
-    let data_array: Vec<DataPoint> = vec![data_point];
+
+    let data_array: Vec<DataPoint> = vec![DataPoint{ price : 5.3 }, DataPoint{ price : 5.6 },DataPoint{ price : 5.9 }];
     return data_array
 }
 
 fn simulate <T: Strategy + std::fmt::Debug>(_strategy: &T, _market_timeline : &Vec<DataPoint>, starting_account: &AccountBalancePoint){
-    println!("\nmarket point is {}", _market_timeline[0].price);
+    println!("\nmarket point is {:?}", _market_timeline[0].price);
+    println!("market point is {:?}", _market_timeline[1].price);
+    println!("market point is {:?}", _market_timeline[2].price);
+
     let  _account_balance_history : Vec<AccountBalancePoint>= vec![starting_account.clone()];
+
     println!("{:?} resulted in {:?}",_strategy, _account_balance_history)
 }
 
