@@ -39,26 +39,46 @@ fn main() {
   
 }
 
+enum Action{
+    Buy{amount: u32, price: f64},
+    Sell{amount: u32, price: f64},
+}
+
 fn play_scenario(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint) ->Vec<f64> {
     let mut _account_history: Vec<f64> = vec![account_balance.clone().cash_ammount];
-    let mut _account_balance = account_balance.clone();
-    let commissioned: f64 = 0.06;
+    let commission: f64 = 0.003;
+
+        
+    let mut _temp_account_balance = account_balance.clone();
+    
+    let mut change_balance = Action::Buy{amount: 0, price : 0.0};
+        
     for day in _stock_prices{
-        if _account_balance.cash_ammount>day{
-            let _new_stocks =((_account_balance.cash_ammount*(1.0-&commissioned))/day).floor() as u32;
-            _account_balance.stocks_holding  += _new_stocks;
-            _account_balance.cash_ammount -=(day*(1.0+&commissioned))*(_new_stocks as f64);
+        if _temp_account_balance.cash_ammount>day{
+            let _new_stocks =((&_temp_account_balance.cash_ammount)/(day*(1.0+&commission))).floor() as u32;
+            change_balance = Action::Buy { amount: (_new_stocks), price: (day) };
         }
         else{
-            let _stocks_to_sell= _account_balance.stocks_holding;
-            let _new_cash = day*(1.0+&commissioned) *(_stocks_to_sell as f64);
-            _account_balance.cash_ammount +=_new_cash;
-            _account_balance.stocks_holding  = 0;
+            let _stocks_to_sell= _temp_account_balance.stocks_holding;
+            
+            change_balance = Action::Sell { amount: (_stocks_to_sell), price: (day) };
         }
-        _account_history.push(_account_balance.cash_ammount);
+        match change_balance{
+            Action::Buy{amount, price} =>{
+                _temp_account_balance.stocks_holding+=amount;
+                _temp_account_balance.cash_ammount -=amount as f64 * price *(commission+1.0);
+            },
+            Action::Sell{amount, price} =>{
+                _temp_account_balance.stocks_holding -= amount;
+                _temp_account_balance.cash_ammount +=amount as f64 * price *(1.0-commission);
+            }
+        }
+        _account_history.push(_temp_account_balance.cash_ammount)      
     }
     _account_history
 }
+
+    
 
 //Parsing
 fn numbers_to_f64(s: &str) -> Result<f64, String> {
