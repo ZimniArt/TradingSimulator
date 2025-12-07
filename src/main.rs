@@ -47,8 +47,8 @@ struct Candle{
     opening_price: f64,
     maximum_price: f64,
     minimum_price: f64,
-    exchange_voplume: f64,
-    price_exchange: f64,
+    exchange_voplume: f64,//unwraped to zero
+    price_exchange: f64,//unwraped to zero
 }
 fn main() { 
     let account_balance = AccountBalancePoint{stocks_holding:0, cash_ammount:100000.0};
@@ -117,8 +117,15 @@ fn parse_file(path: &str) -> Result< Vec<Candle>, Box<dyn Error> >{
             opening_price: parse_numbers(&row[2])?,
             maximum_price: parse_numbers(&row[3])?,
             minimum_price: parse_numbers(&row[4])?,
-            exchange_voplume: parse_numbers(&row[5]).unwrap_or(0.0),
-            price_exchange: parse_numbers(&row[6]).unwrap_or(0.0),
+            exchange_voplume: parse_numbers(&row[5]).unwrap_or_else(|e| {
+                println!("Volume parse error: {}", e);
+                0.0
+            }),
+            price_exchange: parse_numbers(&row[6]).unwrap_or_else(|e| {
+                println!("Volume parse error: {}", e);
+                0.0
+            }
+            ),
         };
     result.push(candle);
     }
