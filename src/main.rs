@@ -56,8 +56,7 @@ fn main() {
     let account_balance = AccountBalancePoint{stocks_holding:0, cash_ammount:100000.0};
     let _aflt = parse_file("D:/2_projects/11_tradingSIm/Raw data/Прошлые данные - AFLT.csv").unwrap();
     let _afit_prices: Vec<f64> = _aflt.iter().map(|c|c.price).collect();
-
-    draw_chart(_afit_prices.len() as f64,_afit_prices , "D:/2_projects/11_tradingSIm/Graphics/flt_price.svg");
+    draw_chart(_afit_prices.len() as f64,_afit_prices , "D:/2_projects/11_tradingSIm/Graphics/test.svg");
    // println!("test {:?}", _aflt);
     let mut _stocks_histoty= parse_data();
     test_all_scenarios(&_stocks_histoty, &account_balance);
