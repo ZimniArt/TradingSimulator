@@ -14,33 +14,7 @@ struct AccountBalancePoint{
     cash_ammount:f64,
 }
 
-    
-#[derive(EnumIter, Debug)]
-enum Scenario{
-    StartBuyEndSell,
-    BuySellLoop,
-}
-#[derive(EnumIter, Debug,Eq, Hash, PartialEq)]
-enum Company{
-    Yandex,
-    Example,
-}
 
-struct StockInfo{
-    price : i32,
-}
-type StocksHistory = Vec<StockInfo>;
-struct Market{
-    companies_history: HashMap<Company, StocksHistory>,
-}
-impl Market{
-    fn new()  -> Self{
-        Self { companies_history: HashMap::new() }
-    }
-    fn add_company(&mut self, _company :Company, _hisory: StocksHistory){
-        self.companies_history.insert(_company,_hisory);
-    }
-}
 
 #[derive(Debug)]
 struct Candle{
@@ -62,10 +36,7 @@ fn main() {
     let _balance_history =play_scenario(_afit_prices, &account_balance);
     draw_chart(_balance_history.len() as f64,_balance_history, "D:/2_projects/11_tradingSIm/Graphics/balance_history.svg");
     
-   // println!("test {:?}", _aflt);
-    let mut _stocks_histoty= parse_data();
-    test_all_scenarios(&_stocks_histoty, &account_balance);
-    
+  
 }
 
 fn play_scenario(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint) ->Vec<f64> {
@@ -88,26 +59,6 @@ fn play_scenario(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint)
     }
     _account_history
 }
-
-fn parse_data() -> Market {
-    let mut _stocks_histoty: Market = Market::new(); 
-    for _copmany in Company::iter(){
-        let temp_history = StocksHistory::new();
-        _stocks_histoty.add_company(_copmany, temp_history);
-    }
-    _stocks_histoty
-}
-
-fn test_all_scenarios(_stocks_histoty: &Market , account_balance: &AccountBalancePoint){
-    for scenario in Scenario::iter(){
-        match scenario {
-            Scenario::BuySellLoop => {println!("{} {}", account_balance.cash_ammount, account_balance.stocks_holding)},
-            Scenario::StartBuyEndSell => {println!("{} {}", account_balance.cash_ammount, account_balance.stocks_holding)},
-        }
-    }
-}
-
-
 
 //Parsing
 fn numbers_to_f64(s: &str) -> Result<f64, String> {
@@ -163,8 +114,7 @@ fn parse_file(path: &str) -> Result< Vec<Candle>, Box<dyn Error> >{
 
     Ok(result)
 }
-
-
+// Draw char
 fn draw_chart(_horizontal: f64, _vertical: Vec<f64>, output: &str) -> Result<(), Box<dyn Error>>  {
     let root = SVGBackend::new(output, (1200,600)).into_drawing_area();
     root.fill(&WHITE)?;
