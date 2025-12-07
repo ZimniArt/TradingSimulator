@@ -33,7 +33,7 @@ fn main() {
     let _aflt_graph_data = _afit_prices.clone();
     draw_chart(_aflt_graph_data.len() as f64,_aflt_graph_data, "D:/2_projects/11_tradingSIm/Graphics/test.svg");
     
-    let _balance_history =play_scenario(_afit_prices, &account_balance);
+    let _balance_history =play_scenario_2(_afit_prices, &account_balance);
     draw_chart(_balance_history.len() as f64,_balance_history, "D:/2_projects/11_tradingSIm/Graphics/balance_history.svg");
     
   
@@ -42,11 +42,12 @@ fn main() {
 enum Action{
     Buy{amount: u32, price: f64},
     Sell{amount: u32, price: f64},
+    Hold,
 }
 
-fn play_scenario(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint) ->Vec<f64> {
+fn play_scenario_1(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint) ->Vec<f64> {
     let mut _account_history: Vec<f64> = vec![account_balance.clone().cash_ammount];
-    let commission: f64 = 0.003;
+    let commission: f64 = 0.001;
 
         
     let mut _temp_account_balance = account_balance.clone();
@@ -66,18 +67,66 @@ fn play_scenario(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint)
         match change_balance{
             Action::Buy{amount, price} =>{
                 _temp_account_balance.stocks_holding+=amount;
-                _temp_account_balance.cash_ammount -=amount as f64 * price *(commission+1.0);
+                _temp_account_balance.cash_ammount -=amount as f64 * price *(1.0+commission);
             },
             Action::Sell{amount, price} =>{
                 _temp_account_balance.stocks_holding -= amount;
                 _temp_account_balance.cash_ammount +=amount as f64 * price *(1.0-commission);
             }
+            Action::Hold =>{}
         }
         _account_history.push(_temp_account_balance.cash_ammount)      
     }
     _account_history
 }
 
+fn play_scenario_2(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint) ->Vec<f64> {
+    let mut _account_history: Vec<f64> = vec![account_balance.clone().cash_ammount];
+    let commission: f64 = 0.03;
+        
+    let mut _temp_account_balance = account_balance.clone();
+    let mut change_balance = Action::Buy{amount: 0, price : 0.0};
+
+    
+    let price_difference:f64 = 5.2;
+    let trading_amount_percent = 0.1;
+    let mut  price_marker:f64 = _stock_prices[0];
+    for day in _stock_prices{
+    
+        if day < (price_marker-price_difference){
+            price_marker=day;
+            let stocks_amount =((&_temp_account_balance.cash_ammount*trading_amount_percent)/(day*(1.0+commission))).floor() as u32;
+            change_balance = Action::Buy { amount: (stocks_amount), price: (day) }
+        }
+        else if day > (price_marker + price_difference){
+            price_marker=day;
+            let stocks_amount = (_temp_account_balance.stocks_holding as f64 * trading_amount_percent).floor() as u32;
+            if stocks_amount == 0 {
+                change_balance = Action::Hold;
+            }
+            else{
+                change_balance = Action::Sell { amount: (stocks_amount), price: (day) }
+            }
+        }
+        match change_balance{
+            Action::Buy{amount, price} =>{
+                _temp_account_balance.stocks_holding+=amount;
+                _temp_account_balance.cash_ammount -=amount as f64 * price *(1.0+commission);
+            },
+            Action::Sell{amount, price} =>{
+                let mut amount =amount;
+                if amount >_temp_account_balance.stocks_holding {amount=_temp_account_balance.stocks_holding}
+               
+                _temp_account_balance.stocks_holding -= amount;
+                _temp_account_balance.cash_ammount +=amount as f64 * price *(1.0-commission);
+            }
+            Action::Hold =>{}
+        }
+        change_balance= Action::Hold;
+        _account_history.push(_temp_account_balance.cash_ammount +(_temp_account_balance.stocks_holding as f64)*day)      
+    }
+    _account_history
+}
     
 
 //Parsing
