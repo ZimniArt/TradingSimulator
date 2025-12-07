@@ -81,24 +81,27 @@ fn play_scenario_1(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoin
 }
 
 fn play_scenario_2(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint) ->Vec<f64> {
-    let mut _account_history: Vec<f64> = vec![account_balance.clone().cash_ammount];
     let commission: f64 = 0.03;
-        
+
+    let prc_dfr_buy:f64 = 4.90;
+    let prc_dif_sell: f64 = 0.90;
+    let trading_amount_percent = 0.3;
+    
+    let mut _account_history: Vec<f64> = vec![account_balance.clone().cash_ammount];
+
     let mut _temp_account_balance = account_balance.clone();
     let mut change_balance = Action::Buy{amount: 0, price : 0.0};
 
     
-    let price_difference:f64 = 5.2;
-    let trading_amount_percent = 0.1;
     let mut  price_marker:f64 = _stock_prices[0];
     for day in _stock_prices{
     
-        if day < (price_marker-price_difference){
+        if day > (price_marker + prc_dfr_buy){
             price_marker=day;
             let stocks_amount =((&_temp_account_balance.cash_ammount*trading_amount_percent)/(day*(1.0+commission))).floor() as u32;
             change_balance = Action::Buy { amount: (stocks_amount), price: (day) }
         }
-        else if day > (price_marker + price_difference){
+        else if day < (price_marker - prc_dif_sell){
             price_marker=day;
             let stocks_amount = (_temp_account_balance.stocks_holding as f64 * trading_amount_percent).floor() as u32;
             if stocks_amount == 0 {
