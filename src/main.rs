@@ -8,7 +8,7 @@ use std::error::Error;
 use plotters::prelude::*;
 
 #[derive(Debug)]
-//#[derive(Clone)]
+#[derive(Clone)]
 struct AccountBalancePoint{
     stocks_holding: u32,
     cash_ammount:f64,
@@ -56,12 +56,39 @@ fn main() {
     let account_balance = AccountBalancePoint{stocks_holding:0, cash_ammount:100000.0};
     let _aflt = parse_file("D:/2_projects/11_tradingSIm/Raw data/Прошлые данные - AFLT.csv").unwrap();
     let _afit_prices: Vec<f64> = _aflt.iter().map(|c|c.price).collect();
-    draw_chart(_afit_prices.len() as f64,_afit_prices , "D:/2_projects/11_tradingSIm/Graphics/test.svg");
+    let _aflt_graph_data = _afit_prices.clone();
+    draw_chart(_aflt_graph_data.len() as f64,_aflt_graph_data, "D:/2_projects/11_tradingSIm/Graphics/test.svg");
+    
+    let _balance_history =play_scenario(_afit_prices, &account_balance);
+    draw_chart(_balance_history.len() as f64,_balance_history, "D:/2_projects/11_tradingSIm/Graphics/balance_history.svg");
+    
    // println!("test {:?}", _aflt);
     let mut _stocks_histoty= parse_data();
     test_all_scenarios(&_stocks_histoty, &account_balance);
     
 }
+
+fn play_scenario(_stock_prices: Vec<f64>, account_balance: &AccountBalancePoint) ->Vec<f64> {
+    let mut _account_history: Vec<f64> = vec![account_balance.clone().cash_ammount];
+    let mut _account_balance = account_balance.clone();
+    let commissioned: f64 = 0.06;
+    for day in _stock_prices{
+        if _account_balance.cash_ammount>day{
+            let _new_stocks =((_account_balance.cash_ammount*(1.0-&commissioned))/day).floor() as u32;
+            _account_balance.stocks_holding  += _new_stocks;
+            _account_balance.cash_ammount -=(day*(1.0+&commissioned))*(_new_stocks as f64);
+        }
+        else{
+            let _stocks_to_sell= _account_balance.stocks_holding;
+            let _new_cash = day*(1.0+&commissioned) *(_stocks_to_sell as f64);
+            _account_balance.cash_ammount +=_new_cash;
+            _account_balance.stocks_holding  = 0;
+        }
+        _account_history.push(_account_balance.cash_ammount);
+    }
+    _account_history
+}
+
 fn parse_data() -> Market {
     let mut _stocks_histoty: Market = Market::new(); 
     for _copmany in Company::iter(){
