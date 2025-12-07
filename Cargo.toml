@@ -5,5 +5,6 @@ edition = "2024"
 
 [dependencies]
 chrono = "0.4.42"
+csv = "1.4.0"
 strum = "0.27.2"
 strum_macros = "0.27.2"
